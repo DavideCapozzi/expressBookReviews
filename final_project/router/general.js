@@ -4,6 +4,19 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+// Check if a user with the given username already exists
+const doesExist = (username) => {
+    // Filter the users array for any user with the same username
+    let userswithsamename = users.filter((user) => {
+        return user.username === username;
+    });
+    // Return true if any user with the same username is found, otherwise false
+    if (userswithsamename.length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 public_users.post("/register", (req,res) => {
     const username = req.body.username;
@@ -39,7 +52,7 @@ public_users.get('/author/:author',function (req, res) {
     let books_writtenbyauthor = [];
     for (const key in books) {
         if (books[key].author === req.params.author) {
-            books_writtenbyauthor.push(books[key])
+            books_writtenbyauthor.push(books[key]);
         }
     }
   return res.send(books_writtenbyauthor);
@@ -47,14 +60,19 @@ public_users.get('/author/:author',function (req, res) {
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  let books_withtitle = [];
+    for (const key in books) {
+        if (books[key].title === req.params.title) {
+            books_withtitle.push(books[key])
+        }
+    }
+  return res.send(books_withtitle);
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  let isbn = req.params.isbn;
+  return res.send(books[isbn].reviews);
 });
 
 module.exports.general = public_users;
