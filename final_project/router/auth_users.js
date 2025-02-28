@@ -43,8 +43,23 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         return res.status(400).json({message: "Review missing"});
     } else {
     books[isbn].reviews[username] = review; 
-    //come si scrive in ES6? 
-    return res.status(200).json({message: "Review updated succesfully"});
+    return res.status(200).json({message: "Review updated successfully"});
+    }
+});
+
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const isbn = req.params.isbn;
+    const username = req.session.authorization.username;
+
+    if (!books[isbn]) {
+        res.status(400).json({message : `No book found with isbn ${isbn}`});
+    } else if (!books[isbn].reviews[username]) {
+        res
+        .status(400)
+        .json({message : `${username} has not submitted any review`});
+    } else {
+        delete books[isbn].reviews[username];
+        res.status(200).json({message : "Review deleted successfully"});
     }
 });
 
